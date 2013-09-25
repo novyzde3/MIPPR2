@@ -6,12 +6,14 @@
  */
 
 #include "Permutace.h"
+#include <math.h>
 
 Permutace::Permutace(int n, int m, int* C) {
     this->mCoins = m;
-    this->Coins = new Coin[this->mCoins]();
+    this->curCoins.resize(m);
+    this->maxCoins.resize(m);
     this->nPayout = n;
-    this->Payout = new int[this->nPayout];
+    this->Payout.resize(this->nPayout);
     for (int i = 0; i<this->nPayout; i++) {
         this->Payout[i] = C[i];
     }
@@ -22,46 +24,66 @@ Permutace::Permutace(int n, int m, int* C) {
 Permutace::Permutace(const Permutace& orig) {
     this->mCoins = orig.mCoins;
     this->maxCoinVal = orig.maxCoinVal;
-    this->Coins = new Coin[this->mCoins]();
+    this->curCoins = orig.curCoins;
+    this->maxCoins = orig.maxCoins;
     this->nPayout = orig.nPayout;
-    this->Payout = new int[this->nPayout];
+    this->Payout.resize(this->nPayout);
     for (int i = 0; i<this->nPayout; i++) {
         this->Payout[i] = orig.Payout[i];
     }
 }
 
-void Permutace::initCoins() {
+void Permutace::initCurCoins() {
     if (this->mCoins >= 1)
-        this->Coins[0].setHodnota(1);
+        this->curCoins[0].setHodnota(1);
     if (this->mCoins >= 2)
-        this->Coins[1].setHodnota(2);
+        this->curCoins[1].setHodnota(2);
 
     for (int i = 2; i<this->mCoins; i++) {
-        this->Coins[i] = (2 * this->Coins[i - 1].getHodnota()) - 1;
+        this->curCoins[i] = (2 * this->curCoins[i - 1].getHodnota()) - 1;
     }
     this->isCoinsInit = true;
 }
 
-Coin* Permutace::getNextPerm() {
+void Permutace::initMaxCoins(){
+    for(int i = maxCoins.size() - 1; i >= 0; i--){
+        if(i == maxCoins.size() - 1){
+            maxCoins[i].setHodnota(this->maxCoinVal);
+        }else{
+            maxCoins[i].setHodnota((int)round(floor((maxCoins[i+1].getHodnota() + 1) / 2)));
+        }
+    }
+}
+
+vector<Coin> Permutace::getNextPerm() {
     if ( this->isCoinsInit == false ) {
-        initCoins();
-        return this->Coins;
+        initCurCoins();
+        initMaxCoins();
+        return this->curCoins;
     }
     cout << "Incrementuji" << endl;
     this->incrementCoins();
-    return this->Coins;
+    return this->curCoins;
 }
 
 void Permutace::incrementCoins() {
     // Zvysi posledni cislo o 1
-    int lastValue = this->Coins[this->mCoins-1].getHodnota();
-    this->Coins[this->mCoins-1].setHodnota(lastValue+1);
+    int lastValue = this->curCoins[this->mCoins-1].getHodnota();
+    this->curCoins[this->mCoins-1].setHodnota(lastValue+1);
 }
 
-void Permutace::printCoins() {
-    cout << "Coins:";
+void Permutace::printCurCoins() {
+    cout << "Current Coins:";
     for (int i = 0; i<this->mCoins; i++) {
-        cout << "\t" << this->Coins[i].getHodnota() << "\t" << this->Coins[i].getPocet() << endl;
+        cout << "\t" << this->curCoins[i].getHodnota() << "\t" << this->curCoins[i].getPocet() << endl;
+    }
+    cout << endl << endl;
+}
+
+void Permutace::printMaxCoins() {
+    cout << "Max Coins:";
+    for (int i = 0; i<this->mCoins; i++) {
+        cout << "\t" << this->maxCoins[i].getHodnota() << endl;
     }
     cout << endl << endl;
 }
@@ -78,14 +100,5 @@ int Permutace::getMaxCoinVal() {
     return this->maxCoinVal;
 }
 
-Permutace::~Permutace() {
-    cout << "Destrukce Permutace start" << endl;
-    cout << "Destrukce Permutace->Coins start" << endl;
-    for (int i = 0; i<this->mCoins; i++) {
-        this->Coins[i].~Coin();
-    }
-    delete[] this->Coins;
-    delete[] this->Payout;
-    cout << "Destrukce Permutace end" << endl;
-}
+Permutace::~Permutace() { }
 

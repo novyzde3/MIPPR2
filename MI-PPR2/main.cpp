@@ -27,8 +27,9 @@ int main(int argc, char** argv) {
     p->printPayout();
     for (int i=0 ; i<3 ; i++) {
         p->getNextPerm();
-        p->printCoins();
+        p->printCurCoins();
     }
+    p->printMaxCoins();
     
     cout << endl << "Destrukce objektu." << endl;
     delete p;
