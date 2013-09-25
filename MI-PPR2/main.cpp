@@ -24,12 +24,13 @@ int main(int argc, char** argv) {
     
     Permutace* p = new Permutace(n, m, C);
     cout << "Maximalni hodnota mince: " << p->getMaxCoinVal() << endl;
-    p->generuj();
     p->printPayout();
-    p->printCoins();
+    for (int i=0 ; i<3 ; i++) {
+        p->getNextPerm();
+        p->printCoins();
+    }
     
-    
-    p->~Permutace();
+    cout << endl << "Destrukce objektu." << endl;
     delete p;
     delete[] C;
     return 0;

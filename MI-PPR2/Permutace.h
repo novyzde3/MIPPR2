@@ -19,7 +19,7 @@ public:
     Permutace(int n, int m, int* C);
     Permutace(const Permutace& orig);
     virtual ~Permutace();
-    void generuj();
+    Coin* getNextPerm();
     void printCoins();
     void printPayout();
     int getMaxCoinVal();
@@ -31,8 +31,10 @@ private:
     int* Payout; // C
     Coin* Coins; // M
     int maxCoinVal; // max(Payout) = Payout[nPayout-1] je maximalni hodnota mince, kterou muzeme pouzit  
-            
-    void initPermutace();
+    bool isCoinsInit;
+    
+    void initCoins();
+    void incrementCoins();
 };
 
 #endif	/* PERMUTACE_H */
