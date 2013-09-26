@@ -20,25 +20,29 @@ public:
     Permutace(int n, int m, int* C);
     Permutace(const Permutace& orig);
     virtual ~Permutace();
-    vector<Coin> getNextPerm();
+    bool nextPerm();
     void printCurCoins();
     void printMaxCoins();
+    void printBestCoins();
     void printPayout();
     int getMaxCoinVal();
+    bool evaluateCurCoins();
     
     
 private:
-    int nPayout; //n
-    int mCoins; //m
-    vector<int> Payout; // C
-    vector<Coin> curCoins; // M
-    vector<Coin> maxCoins;
-    int maxCoinVal; // max(Payout) = Payout[nPayout-1] je maximalni hodnota mince, kterou muzeme pouzit  
-    bool isCoinsInit;
+    int m_iPayoutSize; //n
+    int m_iCoinsSize; //m
+    vector<int> m_Payout; // C
+    vector<Coin> m_CurCoins; // M
+    vector<Coin> m_MaxCoins;
+    vector<Coin> m_BestCoins; //aktualne nejlepsi posloupnost
+    int m_iBestCoinCount;  //nejlepsi pocet minci, kterymi se bude platit
+    int m_iMaxCoinVal; // max(Payout) = Payout[nPayout-1] je maximalni hodnota mince, kterou muzeme pouzit  
+    bool m_bIsCoinsInit;
     
     void initCurCoins();
     void initMaxCoins();
-    void incrementCoins();
+    bool incrementCoins();
 };
 
 #endif	/* PERMUTACE_H */

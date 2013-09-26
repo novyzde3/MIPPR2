@@ -26,7 +26,7 @@ int main(int argc, char** argv) {
     cout << "Maximalni hodnota mince: " << p->getMaxCoinVal() << endl;
     p->printPayout();
     for (int i=0 ; i<3 ; i++) {
-        p->getNextPerm();
+        p->nextPerm();
         p->printCurCoins();
     }
     p->printMaxCoins();
