@@ -52,3 +52,11 @@ void Coin::setPocet(int pocet) {
     }
     this->pocet = pocet;
 }
+
+void Coin::incPocet(int iPlus) {
+    if (pocet < 0) {
+        cout << "Error: Pocet je mensi nez 0 (" << pocet << ")." << endl;
+        exit(-202);
+    }
+    this->pocet += iPlus;
+}

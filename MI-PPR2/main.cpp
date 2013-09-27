@@ -17,7 +17,7 @@ int main(int argc, char** argv) {
     const int n = 6;
     int* C = new int[n];
     for (int i=0 ; i<6 ; i++) {
-        C[i] = 2*i+1;
+        C[i] = i+1;
     }
     const int m = 3;
     
@@ -26,11 +26,9 @@ int main(int argc, char** argv) {
     //cout << "Maximalni hodnota mince: " << p->getMaxCoinVal() << endl;
     p->printPayout();
     while (p->nextPerm()) {
-        p->printCurCoinsOnlyPerm();
-        //p->evaluateCurCoins();
+        p->evaluateCurCoins();
     }
-    p->printMaxCoinsOnlyPerm();
-    //p->printMaxCoins();
+    p->printBestCoins();
       
     
     //cout << endl << "Destrukce objektu." << endl;

@@ -19,6 +19,7 @@ public:
     void setHodnota(int);
     int getPocet();
     void setPocet(int);
+    void incPocet(int iPlus);
 private:
     int hodnota;
     int pocet;

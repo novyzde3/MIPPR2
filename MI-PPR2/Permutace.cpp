@@ -100,10 +100,14 @@ bool Permutace::incrementCoins() {
 }
 
 void Permutace::printCurCoins() {
-    cout << "Current Coins:";
+    cout << "Current Coins:" << endl;
     for (int i = 0; i<this->m_iCoinsSize; i++) {
         cout << "\t" << this->m_CurCoins[i].getHodnota() << "\t" << this->m_CurCoins[i].getPocet() << endl;
     }
+    int iSum = 0;
+    for(vector<Coin>::iterator it = m_CurCoins.begin(); it != m_CurCoins.end(); it++)
+        iSum += it->getPocet();
+    cout << "Sum: " << iSum;
     cout << endl << endl;
 }
 
@@ -116,7 +120,7 @@ void Permutace::printCurCoinsOnlyPerm() {
 }
 
 void Permutace::printMaxCoins() {
-    cout << "Max Coins:";
+    cout << "Max Coins:" << endl;
     for (int i = 0; i<this->m_iCoinsSize; i++) {
         cout << "\t" << this->m_MaxCoins[i].getHodnota() << endl;
     }
@@ -132,10 +136,11 @@ void Permutace::printMaxCoinsOnlyPerm() {
 }
 
 void Permutace::printBestCoins() {
-    cout << "Best Coins:";
+    cout << "Best Coins:" << endl;
     for (int i = 0; i<this->m_iCoinsSize; i++) {
         cout << "\t" << this->m_BestCoins[i].getHodnota() << "\t" << this->m_BestCoins[i].getPocet() << endl;
     }
+    cout << "Sum: " << this->m_iBestCoinCount;
     cout << endl << endl;
 }
 
@@ -152,29 +157,36 @@ int Permutace::getMaxCoinVal() {
 }
 
 void Permutace::evaluateCurCoins() {
-    int iAmount, iCoinCount, iCoinCountTmp, iCoinIndex;
-
+    int iAmount, iCoinCount = 0, iCoinCountTmp, iCoinIndex;
+    //bSkipped je true pokud se predcasne ukonci pocitani
+    bool bSkipped = false;
+    
     for (int i = 0; i < this->m_iPayoutSize; i++) {
         iAmount = this->m_Payout[i];
-
-        iCoinCount = 0;
+        
         iCoinCountTmp = 0;
         iCoinIndex = this->m_iCoinsSize - 1;
-        while (iCoinCount < this->m_iBestCoinCount && iAmount != 0 && iCoinIndex >= 0) {
+        while (iCoinCount < this->m_iBestCoinCount && iAmount > 0 && iCoinIndex >= 0) {
             if ((iCoinCountTmp = iAmount / this->m_CurCoins[iCoinIndex].getHodnota())) {
                 iCoinCount += iCoinCountTmp;
                 iAmount -= (iCoinCountTmp*this->m_CurCoins[iCoinIndex].getHodnota());
-                this->m_CurCoins[iCoinIndex].setPocet(iCoinCountTmp);
+                this->m_CurCoins[iCoinIndex].incPocet(iCoinCountTmp);
             }
             iCoinIndex--;
 
         }
-        if(iAmount == 0){
-            if(iCoinCount < this->m_iBestCoinCount){
-                this->m_iBestCoinCount = iCoinCount;
-                this->m_BestCoins = this->m_CurCoins;
-            }
+        if(iAmount != 0){
+            bSkipped = true;
+            break;
         }
+        if(iCoinCount >= this->m_iBestCoinCount){
+            bSkipped = true;
+            break;
+        }
+    }    
+    if(!bSkipped && iCoinCount < this->m_iBestCoinCount){
+        this->m_iBestCoinCount = iCoinCount;
+        this->m_BestCoins = this->m_CurCoins;
     }
 }
 
