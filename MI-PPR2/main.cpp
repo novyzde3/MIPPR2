@@ -17,21 +17,23 @@ int main(int argc, char** argv) {
     const int n = 6;
     int* C = new int[n];
     for (int i=0 ; i<6 ; i++) {
-        C[i] = i+1;
+        C[i] = 2*i+1;
     }
     const int m = 3;
     
     
     Permutace* p = new Permutace(n, m, C);
-    cout << "Maximalni hodnota mince: " << p->getMaxCoinVal() << endl;
+    //cout << "Maximalni hodnota mince: " << p->getMaxCoinVal() << endl;
     p->printPayout();
-    for (int i=0 ; i<3 ; i++) {
-        p->nextPerm();
-        p->printCurCoins();
+    while (p->nextPerm()) {
+        p->printCurCoinsOnlyPerm();
+        //p->evaluateCurCoins();
     }
-    p->printMaxCoins();
+    p->printMaxCoinsOnlyPerm();
+    //p->printMaxCoins();
+      
     
-    cout << endl << "Destrukce objektu." << endl;
+    //cout << endl << "Destrukce objektu." << endl;
     delete p;
     delete[] C;
     return 0;

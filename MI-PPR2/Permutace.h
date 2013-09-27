@@ -22,11 +22,13 @@ public:
     virtual ~Permutace();
     bool nextPerm();
     void printCurCoins();
+    void printCurCoinsOnlyPerm();
     void printMaxCoins();
+    void printMaxCoinsOnlyPerm();
     void printBestCoins();
     void printPayout();
     int getMaxCoinVal();
-    bool evaluateCurCoins();
+    void evaluateCurCoins();
     
     
 private:
@@ -40,6 +42,8 @@ private:
     int m_iMaxCoinVal; // max(Payout) = Payout[nPayout-1] je maximalni hodnota mince, kterou muzeme pouzit  
     bool m_bIsCoinsInit;
     
+    //parametr slouzi k urceni, jake cislo je dane a od nej se tvori zbytek min posloupnosti - iFrom >= 0
+    void finishCurCoins(int iFrom);
     void initCurCoins();
     void initMaxCoins();
     bool incrementCoins();

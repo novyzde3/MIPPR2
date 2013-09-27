@@ -47,6 +47,9 @@ void Permutace::initCurCoins() {
     for (int i = 2; i<this->m_iCoinsSize; i++) {
         this->m_CurCoins[i] = (2 * this->m_CurCoins[i - 1].getHodnota()) - 1;
     }
+    for(vector<Coin>::iterator it = m_CurCoins.begin(); it != m_CurCoins.end(); it++)
+        it->setPocet(0);
+    
     this->m_bIsCoinsInit = true;
 }
 
@@ -60,35 +63,54 @@ void Permutace::initMaxCoins() {
     }
 }
 
+void Permutace::finishCurCoins(int iFrom) {   
+    for (int i = iFrom + 1; i<this->m_iCoinsSize; i++) {
+        this->m_CurCoins[i] = (2 * this->m_CurCoins[i - 1].getHodnota()) - 1;
+    }
+}
+
 bool Permutace::nextPerm() {
     if (this->m_bIsCoinsInit == false) {
         initCurCoins();
         initMaxCoins();
         return true;
     }
-    cout << "Incrementuji" << endl;
-    if(this->incrementCoins())
-        return true;
-    else
-        return false;
+    //cout << "Incrementuji" << endl;
+    return this->incrementCoins();
 }
 
 bool Permutace::incrementCoins() {
-    // Zvysi posledni cislo o 1
-    int lastValue = this->m_CurCoins[this->m_iCoinsSize - 1].getHodnota();
-    if(lastValue < this->m_iMaxCoinVal){
-        this->m_CurCoins[this->m_iCoinsSize - 1].setHodnota(lastValue + 1);
-        return true;
-    }else{
-        return false;
-    }
+    int coinId = this->m_iCoinsSize - 1;
+    int iNo;
     
+    for(vector<Coin>::iterator it = m_CurCoins.begin(); it != m_CurCoins.end(); it++)
+        it->setPocet(0);
+    
+    while(coinId >= 0){
+        iNo = this->m_CurCoins[coinId].getHodnota();
+        if(iNo < this->m_MaxCoins[coinId].getHodnota()){
+            this->m_CurCoins[coinId].setHodnota(iNo + 1);
+            this->finishCurCoins(coinId);
+            break;
+        }else{
+            coinId--;
+        }
+    }
+    return coinId >= 0;
 }
 
 void Permutace::printCurCoins() {
     cout << "Current Coins:";
     for (int i = 0; i<this->m_iCoinsSize; i++) {
         cout << "\t" << this->m_CurCoins[i].getHodnota() << "\t" << this->m_CurCoins[i].getPocet() << endl;
+    }
+    cout << endl << endl;
+}
+
+void Permutace::printCurCoinsOnlyPerm() {
+    cout << "Current Coins:";
+    for (int i = 0; i<this->m_iCoinsSize; i++) {
+        cout << " " << this->m_CurCoins[i].getHodnota();
     }
     cout << endl << endl;
 }
@@ -101,10 +123,18 @@ void Permutace::printMaxCoins() {
     cout << endl << endl;
 }
 
+void Permutace::printMaxCoinsOnlyPerm() {
+    cout << "Max Coins:";
+    for (int i = 0; i<this->m_iCoinsSize; i++) {
+        cout << " " << this->m_MaxCoins[i].getHodnota();
+    }
+    cout << endl << endl;
+}
+
 void Permutace::printBestCoins() {
     cout << "Best Coins:";
     for (int i = 0; i<this->m_iCoinsSize; i++) {
-        cout << "\t" << this->m_BestCoins[i].getHodnota() << endl;
+        cout << "\t" << this->m_BestCoins[i].getHodnota() << "\t" << this->m_BestCoins[i].getPocet() << endl;
     }
     cout << endl << endl;
 }
@@ -121,7 +151,7 @@ int Permutace::getMaxCoinVal() {
     return this->m_iMaxCoinVal;
 }
 
-bool Permutace::evaluateCurCoins() {
+void Permutace::evaluateCurCoins() {
     int iAmount, iCoinCount, iCoinCountTmp, iCoinIndex;
 
     for (int i = 0; i < this->m_iPayoutSize; i++) {
