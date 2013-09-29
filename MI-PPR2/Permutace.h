@@ -28,7 +28,11 @@ public:
     void printBestCoins();
     void printPayout();
     int getMaxCoinVal();
-    void evaluateCurCoins();
+    
+    //trivialni metoda na zjisteni, jak zaplatit
+    void trivEvaluateCurCoins();
+    //netrivialni metoda na zjisteni, jak zaplatit - pouziva zasobnik a zkousi vsechny moznosti
+    void evaluCurCoinsPrecise();
     
     
 private:

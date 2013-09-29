@@ -17,16 +17,29 @@ int main(int argc, char** argv) {
     const int n = 6;
     int* C = new int[n];
     for (int i=0 ; i<6 ; i++) {
-        C[i] = i+1;
+        C[i] = 50-5*i;
     }
-    const int m = 3;
+    const int m = 6;
     
     
     Permutace* p = new Permutace(n, m, C);
     //cout << "Maximalni hodnota mince: " << p->getMaxCoinVal() << endl;
     p->printPayout();
     while (p->nextPerm()) {
-        p->evaluateCurCoins();
+        //p->trivEvaluateCurCoins();
+        p->evaluCurCoinsPrecise();
+    }
+    p->printBestCoins();
+    
+    delete p;
+    
+    
+    p = new Permutace(n, m, C);
+    //cout << "Maximalni hodnota mince: " << p->getMaxCoinVal() << endl;
+    //p->printPayout();
+    while (p->nextPerm()) {
+        //p->trivEvaluateCurCoins();
+        p->trivEvaluateCurCoins();
     }
     p->printBestCoins();
       

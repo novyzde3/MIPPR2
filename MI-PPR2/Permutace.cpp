@@ -6,7 +6,11 @@
  */
 
 #include "Permutace.h"
+#include "StackRecord.h"
 #include <math.h>
+#include <list>
+
+using namespace std;
 
 Permutace::Permutace(int n, int m, int* C) {
     this->m_iCoinsSize = m;
@@ -156,7 +160,7 @@ int Permutace::getMaxCoinVal() {
     return this->m_iMaxCoinVal;
 }
 
-void Permutace::evaluateCurCoins() {
+void Permutace::trivEvaluateCurCoins() {
     int iAmount, iCoinCount = 0, iCoinCountTmp, iCoinIndex;
     //bSkipped je true pokud se predcasne ukonci pocitani
     bool bSkipped = false;
@@ -189,4 +193,67 @@ void Permutace::evaluateCurCoins() {
         this->m_BestCoins = this->m_CurCoins;
     }
 }
+
+void Permutace::evaluCurCoinsPrecise() {
+    list<StackRecord> myStack;
+    vector<Coin> tmpBestCoins = this->m_CurCoins;
+    //iAmount - castka k vyplaceni, iCoinId - pozice mince, ktera se zkusi v vyplaceni
+    //iCoinCount - pocet minci potrebnych k vyplaceni m_Payout
+    //iFirstCoin - iCoinId pro zacatek posloupnosti
+    int iAmount, iCoinId, iCoinCount = 0, iFirstCoin;
+    bool bCounted;
+    
+    for(int i = 0; i < this->m_iPayoutSize; i++) {
+        bCounted = false;
+        iFirstCoin = this->m_iCoinsSize;        
+        myStack.clear();
+        myStack.push_back(StackRecord(this->m_Payout[i], iFirstCoin--));
+        
+        while (!myStack.empty()) {
+            iAmount = myStack.back().GetAmount();
+            iCoinId = myStack.back().GetCoinId() - 1;
+            
+            if(iCoinId >= 0){
+                if((iAmount / this->m_CurCoins[iCoinId].getHodnota()) >= 1){
+                    myStack.push_back(StackRecord(iAmount - this->m_CurCoins[iCoinId].getHodnota(), 
+                            iCoinId + 1, this->m_CurCoins[iCoinId].getHodnota(), myStack.back().GetCoins()));
+                }else{
+                    myStack.back().Decrement();
+                }
+            }else{
+                myStack.pop_back();
+                if(!myStack.empty())
+                    myStack.back().Decrement();
+            }
+                        
+            if(!myStack.empty() && myStack.back().IsFull()){
+                bCounted = true;
+                iCoinCount += myStack.back().GetCoinCount();
+                for(vector<Coin>::iterator it = this->m_CurCoins.begin(); it != this->m_CurCoins.end(); it++){
+                    it->setPocet(0);
+                }
+                vector<int> coins = myStack.back().GetCoins();
+                for(vector<int>::iterator it = coins.begin(); it != coins.end(); it++){
+                    for(int i = 0; i < this->m_iCoinsSize; i++){
+                        if(this->m_CurCoins[i].getHodnota() == *it){
+                            this->m_CurCoins[i].incPocet(1);
+                        }
+                    }
+                }
+                break;
+            }
+        }
+        if(!bCounted)
+            return;
+        for(int i = 0; i < this->m_iCoinsSize; i++){
+            tmpBestCoins[i].incPocet(this->m_CurCoins[i].getPocet());
+        }
+    }
+    
+    if(iCoinCount < this->m_iBestCoinCount){
+        this->m_iBestCoinCount = iCoinCount;
+        this->m_BestCoins = tmpBestCoins;
+    }
+}
+
 
