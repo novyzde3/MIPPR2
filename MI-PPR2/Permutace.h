@@ -19,38 +19,31 @@ class Permutace {
 public:
     Permutace(int n, int m, int* C);
     Permutace(const Permutace& orig);
+    Permutace operator=(const Permutace&);
+    bool operator==(const Permutace&);
+    bool isSameVectors(vector<Coin>, vector<Coin>);
     virtual ~Permutace();
-    bool nextPerm();
+    vector<Coin> getNextPerm();
     void printCurCoins();
-    void printCurCoinsOnlyPerm();
     void printMaxCoins();
-    void printMaxCoinsOnlyPerm();
-    void printBestCoins();
     void printPayout();
     int getMaxCoinVal();
-    
-    //trivialni metoda na zjisteni, jak zaplatit
-    void trivEvaluateCurCoins();
-    //netrivialni metoda na zjisteni, jak zaplatit - pouziva zasobnik a zkousi vsechny moznosti
-    void evaluCurCoinsPrecise();
-    
+    vector<Coin> getCurCoins();
+    vector<Coin> getMaxCoins();
     
 private:
-    int m_iPayoutSize; //n
-    int m_iCoinsSize; //m
-    vector<int> m_Payout; // C
-    vector<Coin> m_CurCoins; // M
-    vector<Coin> m_MaxCoins;
-    vector<Coin> m_BestCoins; //aktualne nejlepsi posloupnost
-    int m_iBestCoinCount;  //nejlepsi pocet minci, kterymi se bude platit
-    int m_iMaxCoinVal; // max(Payout) = Payout[nPayout-1] je maximalni hodnota mince, kterou muzeme pouzit  
-    bool m_bIsCoinsInit;
+    int nPayout; //n
+    int mCoins; //m
+    vector<int> Payout; // C
+    vector<Coin> curCoins; // M
+    vector<Coin> maxCoins;
+    int maxCoinVal; // max(Payout) = Payout[nPayout-1] je maximalni hodnota mince, kterou muzeme pouzit  
+    bool isCoinsInit;
     
-    //parametr slouzi k urceni, jake cislo je dane a od nej se tvori zbytek min posloupnosti - iFrom >= 0
-    void finishCurCoins(int iFrom);
     void initCurCoins();
     void initMaxCoins();
-    bool incrementCoins();
+    bool incrementCurCoins();
+    void repairCurCoins(int);
 };
 
 #endif	/* PERMUTACE_H */
