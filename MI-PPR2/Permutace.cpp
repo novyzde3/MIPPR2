@@ -6,187 +6,254 @@
  */
 
 #include "Permutace.h"
-#include "constants.h"
+#include "StackRecord.h"
 #include <math.h>
+#include <list>
+
+using namespace std;
 
 Permutace::Permutace(int n, int m, int* C) {
-    cout << ((DEBUG) ? "D: Permutace construct start\n" : "");
-    this->mCoins = m;
-    this->curCoins.resize(m);
-    this->maxCoins.resize(m);
-    this->nPayout = n;
-    this->Payout.resize(this->nPayout);
-    for (int i = 0; i<this->nPayout; i++) {
-        this->Payout[i] = C[i];
+    this->m_iCoinsSize = m;
+    this->m_CurCoins.resize(m);
+    this->m_MaxCoins.resize(m);
+    this->m_BestCoins.resize(m);
+    this->m_iBestCoinCount = INT_MAX;
+    this->m_iPayoutSize = n;
+    this->m_Payout.resize(this->m_iPayoutSize);
+    for (int i = 0; i<this->m_iPayoutSize; i++) {
+        this->m_Payout[i] = C[i];
     }
-    this->maxCoinVal = this->Payout[this->nPayout - 1];
-    this->isCoinsInit = false;
+    this->m_iMaxCoinVal = this->m_Payout[this->m_iPayoutSize - 1];
+    this->m_bIsCoinsInit = false;
 }
 
 Permutace::Permutace(const Permutace& orig) {
-    this->mCoins = orig.mCoins;
-    this->maxCoinVal = orig.maxCoinVal;
-    this->curCoins = orig.curCoins;
-    this->maxCoins = orig.maxCoins;
-    this->nPayout = orig.nPayout;
-    this->Payout.resize(this->nPayout);
-    for (int i = 0; i<this->nPayout; i++) {
-        this->Payout[i] = orig.Payout[i];
-    }
+    this->m_iCoinsSize = orig.m_iCoinsSize;
+    this->m_iMaxCoinVal = orig.m_iMaxCoinVal;
+    this->m_CurCoins = orig.m_CurCoins;
+    this->m_MaxCoins = orig.m_MaxCoins;
+    this->m_BestCoins = orig.m_BestCoins;
+    this->m_iBestCoinCount = orig.m_iBestCoinCount;
+    this->m_iPayoutSize = orig.m_iPayoutSize;
+    this->m_Payout = orig.m_Payout;
+    this->m_bIsCoinsInit = orig.m_bIsCoinsInit;
 }
 
-Permutace Permutace::operator=(const Permutace &orig) {
-    this->mCoins = orig.mCoins;
-    this->maxCoinVal = orig.maxCoinVal;
-    this->curCoins = orig.curCoins;
-    this->maxCoins = orig.maxCoins;
-    this->nPayout = orig.nPayout;
-    this->Payout.resize(this->nPayout);
-    for (int i = 0; i<this->nPayout; i++) {
-        this->Payout[i] = orig.Payout[i];
-    }
-    return orig;
-}
-
-bool Permutace::operator==(const Permutace& sec) {
-    if (this->mCoins != sec.mCoins) {
-        cout << ((DEBUG) ? "D: Operator== objekty maji jiny pocet mCoins\n" : "");
-        return false;
-    }
-    int a, b;
-    Coin c;
-    for (int i=0 ; i<mCoins ; i++) {
-        a = this->curCoins[i].getHodnota();
-        c = sec.curCoins[i];
-        b = c.getHodnota();
-        if (a != b) {
-            cout << "Operator== nerovna se a=" << a << " b=" << b << " i=" << i << endl;
-            return false;
-        }
-    }
-    return true;
-}
-
-bool Permutace::isSameVectors(vector<Coin> u, vector<Coin> v) {
-    if (u.size() != v.size()) {
-        return false;
-    }
-    for (int i=0 ; i<(int)u.size() ; i++) {
-        if (u[i].getHodnota() != v[i].getHodnota()) {
-            return false;
-        }
-    }
-    
-    return true;
+Permutace::~Permutace() {
 }
 
 void Permutace::initCurCoins() {
-    cout << ((DEBUG) ? "D: initCurCoins() start\n" : "");
-    if (this->mCoins >= 1)
-        this->curCoins[0].setHodnota(1);
-    if (this->mCoins >= 2)
-        this->curCoins[1].setHodnota(2);
+    if (this->m_iCoinsSize >= 1)
+        this->m_CurCoins[0].setHodnota(1);
+    if (this->m_iCoinsSize >= 2)
+        this->m_CurCoins[1].setHodnota(2);
 
-    for (int i = 2; i<this->mCoins; i++) {
-        this->curCoins[i] = (2 * this->curCoins[i - 1].getHodnota()) - 1;
+    for (int i = 2; i<this->m_iCoinsSize; i++) {
+        this->m_CurCoins[i] = (2 * this->m_CurCoins[i - 1].getHodnota()) - 1;
     }
-    this->isCoinsInit = true;
-    cout << ((DEBUG) ? "D: initCurCoins() end\n" : "");
+    for(vector<Coin>::iterator it = m_CurCoins.begin(); it != m_CurCoins.end(); it++)
+        it->setPocet(0);
+    
+    this->m_bIsCoinsInit = true;
 }
 
-void Permutace::initMaxCoins(){
-    for(int i = (int)maxCoins.size() - 1; i >= 0; i--){
-        if(i == (int)maxCoins.size() - 1){
-            maxCoins[i].setHodnota(this->maxCoinVal);
-        }else{
-            maxCoins[i].setHodnota((int)round(floor((maxCoins[i+1].getHodnota() + 1) / 2)));
+void Permutace::initMaxCoins() {
+    for (int i = m_MaxCoins.size() - 1; i >= 0; i--) {
+        if (i == m_MaxCoins.size() - 1) {
+            m_MaxCoins[i].setHodnota(this->m_iMaxCoinVal);
+        } else {
+            m_MaxCoins[i].setHodnota((int) round(floor((m_MaxCoins[i + 1].getHodnota() + 1) / 2)));
         }
     }
 }
 
-vector<Coin> Permutace::getNextPerm() {
-    if ( this->isCoinsInit == false ) {
+void Permutace::finishCurCoins(int iFrom) {   
+    for (int i = iFrom + 1; i<this->m_iCoinsSize; i++) {
+        this->m_CurCoins[i] = (2 * this->m_CurCoins[i - 1].getHodnota()) - 1;
+    }
+}
+
+bool Permutace::nextPerm() {
+    if (this->m_bIsCoinsInit == false) {
         initCurCoins();
         initMaxCoins();
-        return this->curCoins;
+        return true;
     }
-    cout << "Incrementuji" << endl;
-    this->incrementCurCoins();
-    return this->curCoins;
+    //cout << "Incrementuji" << endl;
+    return this->incrementCoins();
 }
 
-bool Permutace::incrementCurCoins() {
-    int tmp, overflow = -1;
+bool Permutace::incrementCoins() {
+    int coinId = this->m_iCoinsSize - 1;
+    int iNo;
     
-    if (isSameVectors(curCoins, maxCoins)) {
-        return false;
-    }
+    for(vector<Coin>::iterator it = m_CurCoins.begin(); it != m_CurCoins.end(); it++)
+        it->setPocet(0);
     
-    for (int i=0 ; i<mCoins ; i++) {
-        tmp = curCoins[mCoins-1-i].getHodnota() + 1;
-        if (tmp > maxCoins[mCoins-1-i].getHodnota()) {
-            overflow = mCoins-1-i-1;
-            continue;
-        }
-        else {
-            curCoins[mCoins-1-i] = tmp;
+    while(coinId >= 0){
+        iNo = this->m_CurCoins[coinId].getHodnota();
+        if(iNo < this->m_MaxCoins[coinId].getHodnota()){
+            this->m_CurCoins[coinId].setHodnota(iNo + 1);
+            this->finishCurCoins(coinId);
             break;
+        }else{
+            coinId--;
         }
     }
-    if (overflow != -1) {
-        repairCurCoins(overflow);
-        overflow = -1;
-    }
-    
-    return true;
-}
-
-void Permutace::repairCurCoins(int from) {
-    for (int i=from ; i<mCoins-1 ; i++) {
-        curCoins[i+1].setHodnota(2 * curCoins[i].getHodnota() - 1);
-    }
+    return coinId >= 0;
 }
 
 void Permutace::printCurCoins() {
     cout << "Current Coins:" << endl;
-    for (int i = 0; i<this->mCoins; i++) {
-        cout << "\t" << this->curCoins[i].getHodnota() << "\t" << this->curCoins[i].getPocet() << endl;
+    for (int i = 0; i<this->m_iCoinsSize; i++) {
+        cout << "\t" << this->m_CurCoins[i].getHodnota() << "\t" << this->m_CurCoins[i].getPocet() << endl;
     }
     int iSum = 0;
-    for(vector<Coin>::iterator it = curCoins.begin(); it != curCoins.end(); it++)
+    for(vector<Coin>::iterator it = m_CurCoins.begin(); it != m_CurCoins.end(); it++)
         iSum += it->getPocet();
     cout << "Sum: " << iSum;
+    cout << endl << endl;
+}
 
+void Permutace::printCurCoinsOnlyPerm() {
+    cout << "Current Coins:";
+    for (int i = 0; i<this->m_iCoinsSize; i++) {
+        cout << " " << this->m_CurCoins[i].getHodnota();
+    }
     cout << endl << endl;
 }
 
 void Permutace::printMaxCoins() {
-    cout << "Max Coins:";
-    for (int i = 0; i<this->mCoins; i++) {
-        cout << "\t" << this->maxCoins[i].getHodnota() << endl;
+    cout << "Max Coins:" << endl;
+    for (int i = 0; i<this->m_iCoinsSize; i++) {
+        cout << "\t" << this->m_MaxCoins[i].getHodnota() << endl;
     }
+    cout << endl << endl;
+}
+
+void Permutace::printMaxCoinsOnlyPerm() {
+    cout << "Max Coins:";
+    for (int i = 0; i<this->m_iCoinsSize; i++) {
+        cout << " " << this->m_MaxCoins[i].getHodnota();
+    }
+    cout << endl << endl;
+}
+
+void Permutace::printBestCoins() {
+    cout << "Best Coins:" << endl;
+    for (int i = 0; i<this->m_iCoinsSize; i++) {
+        cout << "\t" << this->m_BestCoins[i].getHodnota() << "\t" << this->m_BestCoins[i].getPocet() << endl;
+    }
+    cout << "Sum: " << this->m_iBestCoinCount;
     cout << endl << endl;
 }
 
 void Permutace::printPayout() {
     cout << "Payout (vyplacene castky):" << endl << "\t{ ";
-    for (int i = 0; i<this->nPayout; i++) {
-        cout << this->Payout[i] << ", ";
+    for (int i = 0; i<this->m_iPayoutSize; i++) {
+        cout << this->m_Payout[i] << ", ";
     }
     cout << "}" << endl << endl;
 }
 
 int Permutace::getMaxCoinVal() {
-    return this->maxCoinVal;
+    return this->m_iMaxCoinVal;
 }
 
-vector<Coin> Permutace::getCurCoins() {
-    return this->curCoins;
+void Permutace::trivEvaluateCurCoins() {
+    int iAmount, iCoinCount = 0, iCoinCountTmp, iCoinIndex;
+    //bSkipped je true pokud se predcasne ukonci pocitani
+    bool bSkipped = false;
+    
+    for (int i = 0; i < this->m_iPayoutSize; i++) {
+        iAmount = this->m_Payout[i];
+        
+        iCoinCountTmp = 0;
+        iCoinIndex = this->m_iCoinsSize - 1;
+        while (iCoinCount < this->m_iBestCoinCount && iAmount > 0 && iCoinIndex >= 0) {
+            if ((iCoinCountTmp = iAmount / this->m_CurCoins[iCoinIndex].getHodnota())) {
+                iCoinCount += iCoinCountTmp;
+                iAmount -= (iCoinCountTmp*this->m_CurCoins[iCoinIndex].getHodnota());
+                this->m_CurCoins[iCoinIndex].incPocet(iCoinCountTmp);
+            }
+            iCoinIndex--;
+
+        }
+        if(iAmount != 0){
+            bSkipped = true;
+            break;
+        }
+        if(iCoinCount >= this->m_iBestCoinCount){
+            bSkipped = true;
+            break;
+        }
+    }    
+    if(!bSkipped && iCoinCount < this->m_iBestCoinCount){
+        this->m_iBestCoinCount = iCoinCount;
+        this->m_BestCoins = this->m_CurCoins;
+    }
 }
 
-vector<Coin> Permutace::getMaxCoins() {
-    return this->maxCoins;
+void Permutace::evaluCurCoinsPrecise() {
+    list<StackRecord> myStack;
+    vector<Coin> tmpBestCoins = this->m_CurCoins;
+    //iAmount - castka k vyplaceni, iCoinId - pozice mince, ktera se zkusi v vyplaceni
+    //iCoinCount - pocet minci potrebnych k vyplaceni m_Payout
+    //iFirstCoin - iCoinId pro zacatek posloupnosti
+    int iAmount, iCoinId, iCoinCount = 0, iFirstCoin;
+    bool bCounted;
+    
+    for(int i = 0; i < this->m_iPayoutSize; i++) {
+        bCounted = false;
+        iFirstCoin = this->m_iCoinsSize;        
+        myStack.clear();
+        myStack.push_back(StackRecord(this->m_Payout[i], iFirstCoin--));
+        
+        while (!myStack.empty()) {
+            iAmount = myStack.back().GetAmount();
+            iCoinId = myStack.back().GetCoinId() - 1;
+            
+            if(iCoinId >= 0){
+                if((iAmount / this->m_CurCoins[iCoinId].getHodnota()) >= 1){
+                    myStack.push_back(StackRecord(iAmount - this->m_CurCoins[iCoinId].getHodnota(), 
+                            iCoinId + 1, this->m_CurCoins[iCoinId].getHodnota(), myStack.back().GetCoins()));
+                }else{
+                    myStack.back().Decrement();
+                }
+            }else{
+                myStack.pop_back();
+                if(!myStack.empty())
+                    myStack.back().Decrement();
+            }
+                        
+            if(!myStack.empty() && myStack.back().IsFull()){
+                bCounted = true;
+                iCoinCount += myStack.back().GetCoinCount();
+                for(vector<Coin>::iterator it = this->m_CurCoins.begin(); it != this->m_CurCoins.end(); it++){
+                    it->setPocet(0);
+                }
+                vector<int> coins = myStack.back().GetCoins();
+                for(vector<int>::iterator it = coins.begin(); it != coins.end(); it++){
+                    for(int i = 0; i < this->m_iCoinsSize; i++){
+                        if(this->m_CurCoins[i].getHodnota() == *it){
+                            this->m_CurCoins[i].incPocet(1);
+                        }
+                    }
+                }
+                break;
+            }
+        }
+        if(!bCounted)
+            return;
+        for(int i = 0; i < this->m_iCoinsSize; i++){
+            tmpBestCoins[i].incPocet(this->m_CurCoins[i].getPocet());
+        }
+    }
+    
+    if(iCoinCount < this->m_iBestCoinCount){
+        this->m_iBestCoinCount = iCoinCount;
+        this->m_BestCoins = tmpBestCoins;
+    }
 }
 
-Permutace::~Permutace() { }
 

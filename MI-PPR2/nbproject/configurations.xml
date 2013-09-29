@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<configurationDescriptor version="84">
+<configurationDescriptor version="88">
   <logicalFolder name="root" displayName="root" projectFiles="true" kind="ROOT">
     <logicalFolder name="HeaderFiles"
                    displayName="Header Files"
                    projectFiles="true">
       <itemPath>Coin.h</itemPath>
       <itemPath>Permutace.h</itemPath>
-      <itemPath>constants.h</itemPath>
+      <itemPath>StackRecord.h</itemPath>
     </logicalFolder>
     <logicalFolder name="ResourceFiles"
                    displayName="Resource Files"
@@ -17,6 +17,7 @@
                    projectFiles="true">
       <itemPath>Coin.cpp</itemPath>
       <itemPath>Permutace.cpp</itemPath>
+      <itemPath>StackRecord.cpp</itemPath>
       <itemPath>main.cpp</itemPath>
     </logicalFolder>
     <logicalFolder name="TestFiles"
@@ -39,10 +40,21 @@
         <compilerSet>default</compilerSet>
       </toolsSet>
       <compileType>
-        <ccTool>
-          <commandLine>-Wall</commandLine>
-        </ccTool>
       </compileType>
+      <item path="Coin.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="Coin.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Permutace.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="Permutace.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="StackRecord.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="StackRecord.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="main.cpp" ex="false" tool="1" flavor2="0">
+      </item>
     </conf>
     <conf name="Release" type="1">
       <toolsSet>
@@ -63,6 +75,20 @@
           <developmentMode>5</developmentMode>
         </asmTool>
       </compileType>
+      <item path="Coin.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="Coin.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Permutace.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="Permutace.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="StackRecord.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="StackRecord.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="main.cpp" ex="false" tool="1" flavor2="0">
+      </item>
     </conf>
   </confs>
 </configurationDescriptor>

@@ -46,7 +46,7 @@ int Coin::getPocet() {
 }
 
 void Coin::setPocet(int pocet) {
-    if (pocet <= 0) {
+    if (pocet < 0) {
         cout << "Error: Pocet je mensi nez 0 (" << pocet << ")." << endl;
         exit(-201);
     }

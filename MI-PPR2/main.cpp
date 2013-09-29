@@ -13,29 +13,38 @@
 using namespace std;
 
 
-int main(int argc, char** argv) {  
-    const int n = 7;
+int main(int argc, char** argv) {
+    const int n = 6;
     int* C = new int[n];
-    for (int i=0 ; i<n ; i++) {
-        C[i] = i+1;
+    for (int i=0 ; i<6 ; i++) {
+        C[i] = 50-5*i;
     }
-    C[6] = 9;
-    const int m = 5;//s 4 funguje blbe
+    const int m = 6;
     
     
     Permutace* p = new Permutace(n, m, C);
-    cout << "Maximalni hodnota mince: " << p->getMaxCoinVal() << endl;
+    //cout << "Maximalni hodnota mince: " << p->getMaxCoinVal() << endl;
     p->printPayout();
-    
-    bool isEnd = false;
-    while (!isEnd) {
-        p->getNextPerm();
-        p->printCurCoins();
-        isEnd = p->isSameVectors(p->getCurCoins(), p->getMaxCoins());
+    while (p->nextPerm()) {
+        //p->trivEvaluateCurCoins();
+        p->evaluCurCoinsPrecise();
     }
-    p->printMaxCoins();
+    p->printBestCoins();
     
-    cout << endl << "Destrukce objektu." << endl;
+    delete p;
+    
+    
+    p = new Permutace(n, m, C);
+    //cout << "Maximalni hodnota mince: " << p->getMaxCoinVal() << endl;
+    //p->printPayout();
+    while (p->nextPerm()) {
+        //p->trivEvaluateCurCoins();
+        p->trivEvaluateCurCoins();
+    }
+    p->printBestCoins();
+      
+    
+    //cout << endl << "Destrukce objektu." << endl;
     delete p;
     delete[] C;
     return 0;
