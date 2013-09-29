@@ -7,8 +7,9 @@
 
 #include <cstdlib>
 #include <iostream>
-
+#include <vector>
 #include "Permutace.h"
+#include "constants.h"
 
 using namespace std;
 
@@ -19,19 +20,26 @@ int main(int argc, char** argv) {
     for (int i=0 ; i<n ; i++) {
         C[i] = i+1;
     }
-    C[6] = 9;
-    const int m = 5;//s 4 funguje blbe
+    C[6] = 11;
+    const int m = 4;
     
+    vector<Coin> isEnd;
+    isEnd.resize(1);
     
     Permutace* p = new Permutace(n, m, C);
     cout << "Maximalni hodnota mince: " << p->getMaxCoinVal() << endl;
     p->printPayout();
     
-    bool isEnd = false;
-    while (!isEnd) {
-        p->getNextPerm();
-        p->printCurCoins();
-        isEnd = p->isSameVectors(p->getCurCoins(), p->getMaxCoins());
+    while (isEnd[0].getHodnota() != ENDVAL) {
+        isEnd = p->getNextPerm();
+        
+        if (isEnd[0].getHodnota() != ENDVAL) //aby se posledni hodnota nevypisovala dvakrat (ale nevraci ji to 2x)
+            p->printCurCoins();
+        
+        if (isEnd.size() < 1) {
+            cerr << "main: Error function gerNextPerm return a vector with size 0" << endl;
+            exit(-3);
+        }
     }
     p->printMaxCoins();
     

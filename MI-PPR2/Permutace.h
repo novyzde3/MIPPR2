@@ -22,6 +22,7 @@ public:
     Permutace operator=(const Permutace&);
     bool operator==(const Permutace&);
     bool isSameVectors(vector<Coin>, vector<Coin>);
+    bool isSmallerVector(vector<Coin>, vector<Coin>);
     virtual ~Permutace();
     vector<Coin> getNextPerm();
     void printCurCoins();

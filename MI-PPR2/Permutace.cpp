@@ -80,6 +80,27 @@ bool Permutace::isSameVectors(vector<Coin> u, vector<Coin> v) {
     return true;
 }
 
+bool Permutace::isSmallerVector(vector<Coin> smaller, vector<Coin> bigger) {
+    unsigned size; //delka kratsiho vectoru
+    if (smaller.size() != bigger.size()) {
+        cout << ((DEBUG) ? "D: isSmallerVector() Delky vectoru se nerovnaji\n" : "");
+    }
+    if (smaller.size() < bigger.size()) {
+        size = smaller.size();
+    }
+    else {
+        size = bigger.size();
+    }
+    
+    for (int i=0 ; i<(int)size ; i++) {
+        if (bigger[i].getHodnota() < smaller[i].getHodnota()) {
+            return false;
+        }
+    }
+    
+    return true;
+}
+
 void Permutace::initCurCoins() {
     cout << ((DEBUG) ? "D: initCurCoins() start\n" : "");
     if (this->mCoins >= 1)
@@ -105,20 +126,33 @@ void Permutace::initMaxCoins(){
 }
 
 vector<Coin> Permutace::getNextPerm() {
+    // Prvni dotaz na permutaci -> vygeneruj nove permutace 1,2,3,5,9,17 podle vzorce
     if ( this->isCoinsInit == false ) {
         initCurCoins();
         initMaxCoins();
         return this->curCoins;
     }
+    
+    //Promenne pro definici konce
+    // Pokud je curCoins mensi nebo rovna maxCoins pak se vrati predem definovany vector (nemozny)
+    bool ret = true;
+    vector<Coin> endVector;
+    Coin coin(ENDVAL);
+    endVector.push_back(coin);
+    
     cout << "Incrementuji" << endl;
-    this->incrementCurCoins();
-    return this->curCoins;
+    ret = this->incrementCurCoins();
+    
+    if (ret)
+        return this->curCoins;
+    else
+        return endVector;
 }
 
 bool Permutace::incrementCurCoins() {
     int tmp, overflow = -1;
     
-    if (isSameVectors(curCoins, maxCoins)) {
+    if ((isSameVectors(curCoins, maxCoins)) || (isSmallerVector(maxCoins, curCoins))) {
         return false;
     }
     
@@ -161,7 +195,7 @@ void Permutace::printCurCoins() {
 }
 
 void Permutace::printMaxCoins() {
-    cout << "Max Coins:";
+    cout << "Max Coins:\n";
     for (int i = 0; i<this->mCoins; i++) {
         cout << "\t" << this->maxCoins[i].getHodnota() << endl;
     }
