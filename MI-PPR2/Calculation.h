@@ -10,6 +10,7 @@
 
 #include <vector>
 #include <cstdlib>
+#include <limits.h>
 #include <iostream>
 #include "Coin.h"
 
