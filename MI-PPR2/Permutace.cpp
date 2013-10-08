@@ -140,7 +140,6 @@ vector<Coin> Permutace::getNextPerm() {
     Coin coin(ENDVAL);
     endVector.push_back(coin);
     
-    cout << "Incrementuji" << endl;
     ret = this->incrementCurCoins();
     
     if (ret)

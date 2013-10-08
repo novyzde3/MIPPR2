@@ -29,31 +29,25 @@ int main(int argc, char** argv) {
     
     Permutace* p = new Permutace(n, m, C);
     Calculation* calcPrim = new Calculation(n, m, C);
-    Calculation* calcPrec = new Calculation(n, m, C);
-    cout << "Maximalni hodnota mince: " << p->getMaxCoinVal() << endl;
+    //cout << "Maximalni hodnota mince: " << p->getMaxCoinVal() << endl;
+    cout << "n = " << n << " m = " << m << endl;
     p->printPayout();
     
     while (isEnd[0].getHodnota() != ENDVAL) {
         isEnd = p->getNextPerm();
         calcPrim->trivEvaluateCurCoins(isEnd);
-        calcPrec->evaluCurCoinsPrecise(isEnd);
         
-        if (isEnd[0].getHodnota() != ENDVAL) //aby se posledni hodnota nevypisovala dvakrat (ale nevraci ji to 2x)
-            p->printCurCoins();
         
         if (isEnd.size() < 1) {
             cerr << "main: Error function gerNextPerm return a vector with size 0" << endl;
             exit(-3);
         }
     }
-    p->printMaxCoins();
+//    p->printMaxCoins();
     calcPrim->printBestCoins();
-    calcPrec->printBestCoins();
     
-    cout << endl << "Destrukce objektu." << endl;
     delete p;
     delete calcPrim;
-    delete calcPrec;
     delete[] C;
     return 0;
 }
