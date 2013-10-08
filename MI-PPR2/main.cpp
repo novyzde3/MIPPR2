@@ -16,13 +16,13 @@ using namespace std;
 
 
 int main(int argc, char** argv) {  
-    const int n = 7;
+    int n, m;
+    
+    cin >> n;
     int* C = new int[n];
-    for (int i=0 ; i<n ; i++) {
-        C[i] = i+1;
-    }
-    C[6] = 11;
-    const int m = 4;
+    for(int i = 0; i < n; i++)
+        cin >> C[i];
+    cin >> m;
     
     vector<Coin> isEnd;
     isEnd.resize(1);
