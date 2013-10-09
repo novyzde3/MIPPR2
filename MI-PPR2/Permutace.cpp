@@ -178,6 +178,9 @@ void Permutace::repairCurCoins(int from) {
     for (int i=from ; i<mCoins-1 ; i++) {
         curCoins[i+1].setHodnota(2 * curCoins[i].getHodnota() - 1);
     }
+    if(from == 0 && DEBUG){
+        cout << "Zvysuji " << curCoins[0].getHodnota() << endl; 
+    }
 }
 
 void Permutace::printCurCoins() {

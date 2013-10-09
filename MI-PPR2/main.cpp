@@ -35,8 +35,8 @@ int main(int argc, char** argv) {
     
     while (isEnd[0].getHodnota() != ENDVAL) {
         isEnd = p->getNextPerm();
-        calcPrim->trivEvaluateCurCoins(isEnd);
-        
+        //calcPrim->trivEvaluateCurCoins(isEnd);
+        calcPrim->evaluCurCoinsPrecise(isEnd);
         
         if (isEnd.size() < 1) {
             cerr << "main: Error function gerNextPerm return a vector with size 0" << endl;
