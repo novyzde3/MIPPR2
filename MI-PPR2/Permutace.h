@@ -27,16 +27,20 @@ public:
     vector<Coin> getNextPerm();
     void printCurCoins();
     void printMaxCoins();
+    void printMinCoins();
     void printPayout();
     int getMaxCoinVal();
+    int getMCoins();
     vector<Coin> getCurCoins();
     vector<Coin> getMaxCoins();
+    vector<Coin> getMinCoins();
     
 private:
     int nPayout; //n
     int mCoins; //m
     vector<int> Payout; // C
     vector<Coin> curCoins; // M
+    vector<Coin> minCoins;
     vector<Coin> maxCoins;
     int maxCoinVal; // max(Payout) = Payout[nPayout-1] je maximalni hodnota mince, kterou muzeme pouzit  
     bool isCoinsInit;
