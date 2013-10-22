@@ -30,7 +30,7 @@ Coin::Coin(const Coin& orig) {
 
 Coin::~Coin() {}
 
-int Coin::getHodnota() {
+int Coin::getHodnota() const{
     return this->hodnota;
 }
 void Coin::setHodnota(int hodnota) {
@@ -41,7 +41,7 @@ void Coin::setHodnota(int hodnota) {
     this->hodnota = hodnota;
 }
 
-int Coin::getPocet() {
+int Coin::getPocet() const{
     return this->pocet;
 }
 

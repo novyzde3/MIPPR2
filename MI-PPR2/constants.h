@@ -12,7 +12,9 @@ const bool  DEBUG = true;
 //const int   ENDVAL = -158;
 //const int   ERR = -99;
 
+
 #define ENDVAL -158
+#define STARTVAL 999
 #define ERR -99
 
 #endif	/* CONSTANTS_H */

@@ -15,9 +15,9 @@ public:
     Coin(const Coin& orig);
     virtual ~Coin();
     
-    int getHodnota();
+    int getHodnota() const;
     void setHodnota(int);
-    int getPocet();
+    int getPocet() const;
     void setPocet(int);
     void incPocet(int iPlus);
 private:

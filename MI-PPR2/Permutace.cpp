@@ -67,6 +67,28 @@ bool Permutace::operator==(const Permutace& sec) {
     return true;
 }
 
+Permutace* Permutace::copyAndCut(int cut) const{
+    Permutace* tmp = new Permutace();
+    
+    tmp->mCoins = cut;
+    tmp->maxCoinVal = this->maxCoins[cut-1].getHodnota();
+    tmp->curCoins.resize(this->mCoins);
+    for(int i = 0; i < tmp->mCoins; i++){
+        tmp->curCoins[i] = this->curCoins[i];
+    }
+    tmp->maxCoins.resize(this->mCoins);
+    for(int i = 0; i < tmp->mCoins; i++){
+        tmp->maxCoins[i] = this->maxCoins[i];
+    }
+    tmp->nPayout = this->nPayout;
+    tmp->Payout.resize(this->nPayout);
+    for (int i = 0; i<tmp->nPayout; i++) {
+        tmp->Payout[i] = this->Payout[i];
+    }
+    //tmp->isCoinsInit = false;
+    return tmp;
+}
+
 bool Permutace::isSameVectors(vector<Coin> u, vector<Coin> v) {
     if (u.size() != v.size()) {
         return false;

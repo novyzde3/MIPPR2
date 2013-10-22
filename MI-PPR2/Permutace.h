@@ -17,9 +17,11 @@ using namespace std;
 
 class Permutace {
 public:
+    Permutace() {}
     Permutace(int n, int m, int* C);
     Permutace(const Permutace& orig);
     Permutace operator=(const Permutace&);
+    Permutace* copyAndCut(int cut) const;
     bool operator==(const Permutace&);
     bool isSameVectors(vector<Coin>, vector<Coin>);
     bool isSmallerVector(vector<Coin>, vector<Coin>);

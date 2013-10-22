@@ -15,7 +15,7 @@
 using namespace std;
 
 
-void rozdelitNaKolikaRadech(Permutace *p, int n, int *C, int cpus, int &radu, int &cnt) {
+void rozdelitNaKolikaRadech(Permutace *perm, int n, int *C, int cpus, int &radu, int &cnt) {
     vector<Coin> isEnd;
     isEnd.resize(1);
     
@@ -27,9 +27,9 @@ void rozdelitNaKolikaRadech(Permutace *p, int n, int *C, int cpus, int &radu, in
     tmpP2->printMaxCoins();*/
 
     Permutace* tmpP2;
-    for (int i = 1; i <= p->getMCoins(); i++) {
-        tmpP2 = new Permutace(n, i, C);
-        isEnd[0].setHodnota(999);
+    for (int i = 1; i <= perm->getMCoins(); i++) {
+        tmpP2 = perm->copyAndCut(i);
+        isEnd[0].setHodnota(STARTVAL);
         cout << "Cnt: ";
         while (isEnd[0].getHodnota() != ENDVAL) {
             isEnd = tmpP2->getNextPerm();
@@ -55,9 +55,9 @@ void rozdelitNaKolikaRadech(Permutace *p, int n, int *C, int cpus, int &radu, in
     exit (-4);
 }
 
-int rozdelPraci(Permutace *p, int n, int *C, int cpus) {
-    int radu, segmentu;
-    rozdelitNaKolikaRadech(p, n, C, cpus, radu, segmentu);
+int rozdelPraci(Permutace *perm, int n, int *C, int cpus) {
+    int radu = 0, segmentu = 0;
+    rozdelitNaKolikaRadech(perm, n, C, cpus, radu, segmentu);
     cout << "Rozdelit praci na " << segmentu << " segmentu pro " << cpus << " procesoru (" << radu << ") radu. Konec!" << endl;
     
     return 0;
@@ -81,15 +81,16 @@ int main(int argc, char** argv) {
     
     vector<Coin> isEnd;
     isEnd.resize(1);
-
-    Permutace* p = new Permutace(n, m, C);
+    isEnd[0].setHodnota(STARTVAL);
+    
+    Permutace* perm = new Permutace(n, m, C);
     Calculation* calcPrim = new Calculation(n, m, C);
     //cout << "Maximalni hodnota mince: " << p->getMaxCoinVal() << endl;
     cout << "n = " << n << " m = " << m << endl;
-    p->printPayout();
+    perm->printPayout();
 
     while (isEnd[0].getHodnota() != ENDVAL) {
-        isEnd = p->getNextPerm();
+        isEnd = perm->getNextPerm();
         //calcPrim->trivEvaluateCurCoins(isEnd);
         calcPrim->evaluCurCoinsPrecise(isEnd);
 
@@ -102,10 +103,12 @@ int main(int argc, char** argv) {
     calcPrim->printBestCoins();
     
     // rozdeleni prace na zacatku (dela procesor 1)
-    rozdelPraci(p, n, C, cpus);
+    Permutace* permDivide = new Permutace(n, m, C);
+    permDivide->getNextPerm();
+    rozdelPraci(permDivide, n, C, cpus);
     
 
-    delete p;
+    delete perm;
     delete calcPrim;
     delete[] C;
     return 0;
