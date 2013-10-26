@@ -56,7 +56,7 @@ void Calculation::trivEvaluateCurCoins(vector<Coin> permutation) {
         
         iCoinCountTmp = 0;
         iCoinIndex = this->m_iCoinsSize - 1;
-        while (iCoinCount < this->m_iBestCoinCount && iAmount > 0 && iCoinIndex >= 0) {
+        while ((iCoinCount < this->m_iBestCoinCount) && (iAmount > 0) && (iCoinIndex >= 0)) {
             if ((iCoinCountTmp = iAmount / permutation[iCoinIndex].getHodnota())) {
                 iCoinCount += iCoinCountTmp;
                 iAmount -= (iCoinCountTmp*permutation[iCoinIndex].getHodnota());

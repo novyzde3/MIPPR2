@@ -21,10 +21,6 @@ void rozdelitNaKolikaRadech(Permutace *perm, int n, int *C, int cpus, int &radu,
     
     //Jak rozdelit praci na zacatku vypoctu
     cout << "-------------------Rozdeleni prace-------------------" << endl;
-    
-    /*tmpP2->getNextPerm(); //musi byt aby se inicializovala Permutace
-    tmpP2->printMinCoins();
-    tmpP2->printMaxCoins();*/
 
     Permutace* tmpP2;
     for (int i = 1; i <= perm->getMCoins(); i++) {
@@ -52,7 +48,7 @@ void rozdelitNaKolikaRadech(Permutace *perm, int n, int *C, int cpus, int &radu,
     }
     //Pokud ma cela permutace mene prvku nez je procesoru
     cerr << "rozdelitNaKolikaRadech: Error, permutace ma mene prvku nez je procesoru." << endl;
-    exit (-4);
+    //exit (-4);
 }
 
 int rozdelPraci(Permutace *perm, int n, int *C, int cpus) {
@@ -67,17 +63,11 @@ int main(int argc, char** argv) {
     int cpus = 43; //pocet procesoru
     
     int n = 5;
-    //cin >> n;
     int* C = new int[n];
-    for (int i = 0; i < 6; i++) {
+    for (int i = 0; i < n; i++) {
         C[i] = i * 7 - i*i;
     }
-
     int m = 4;
-    /*for(int i = 0; i < n; i++) {
-        cin >> C[i];
-    }*/
-    //cin >> m;
     
     vector<Coin> isEnd;
     isEnd.resize(1);
@@ -85,14 +75,16 @@ int main(int argc, char** argv) {
     
     Permutace* perm = new Permutace(n, m, C);
     Calculation* calcPrim = new Calculation(n, m, C);
-    //cout << "Maximalni hodnota mince: " << p->getMaxCoinVal() << endl;
     cout << "n = " << n << " m = " << m << endl;
     perm->printPayout();
 
-    while (isEnd[0].getHodnota() != ENDVAL) {
+    while (true) {
         isEnd = perm->getNextPerm();
-        //calcPrim->trivEvaluateCurCoins(isEnd);
-        calcPrim->evaluCurCoinsPrecise(isEnd);
+        if(isEnd[0].getHodnota() == ENDVAL)
+            break;
+
+        calcPrim->trivEvaluateCurCoins(isEnd);
+        //calcPrim->evaluCurCoinsPrecise(isEnd);
 
         if (isEnd.size() < 1) {
             cerr << "main: Error function gerNextPerm return a vector with size 0" << endl;
@@ -109,8 +101,9 @@ int main(int argc, char** argv) {
     
 
     delete perm;
+    delete permDivide;
     delete calcPrim;
-    delete[] C;
+    delete [] C;
     return 0;
 }
 

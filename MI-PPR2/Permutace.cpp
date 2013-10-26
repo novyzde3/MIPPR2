@@ -85,7 +85,7 @@ Permutace* Permutace::copyAndCut(int cut) const{
     for (int i = 0; i<tmp->nPayout; i++) {
         tmp->Payout[i] = this->Payout[i];
     }
-    //tmp->isCoinsInit = false;
+    tmp->isCoinsInit = this->isCoinsInit;
     return tmp;
 }
 
