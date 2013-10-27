@@ -72,12 +72,12 @@ Permutace* Permutace::copyAndCut(int cut) const{
     
     tmp->mCoins = cut;
     tmp->maxCoinVal = this->maxCoins[cut-1].getHodnota();
-    tmp->curCoins.resize(this->mCoins);
-    for(int i = 0; i < tmp->mCoins; i++){
+    tmp->curCoins.resize(cut);
+    for(int i = 0; i < cut; i++){
         tmp->curCoins[i] = this->curCoins[i];
     }
-    tmp->maxCoins.resize(this->mCoins);
-    for(int i = 0; i < tmp->mCoins; i++){
+    tmp->maxCoins.resize(cut);
+    for(int i = 0; i < cut; i++){
         tmp->maxCoins[i] = this->maxCoins[i];
     }
     tmp->nPayout = this->nPayout;
@@ -147,6 +147,16 @@ void Permutace::initMaxCoins() {
     }
 }
 
+void Permutace::repairMaxCoins(){
+    for (int i = this->mCoins - 1; i >= 0; i--) {
+        if (i == this->mCoins - 1 && this->maxCoins[i].getHodnota() == -1) {
+            this->maxCoins[i].setHodnota(this->maxCoinVal);
+        } else if(this->maxCoins[i].getHodnota() == -1){
+            this->maxCoins[i].setHodnota((int) round(floor((this->maxCoins[i + 1].getHodnota() + 1) / 2)));
+        }
+    }
+}
+
 vector<Coin> Permutace::getNextPerm() {
     // Prvni dotaz na permutaci -> vygeneruj nove permutace 1,2,3,5,9,17 podle vzorce
     if (this->isCoinsInit == false) {
@@ -197,7 +207,7 @@ bool Permutace::incrementCurCoins() {
 
 void Permutace::repairCurCoins(int from) {
     for (int i = from; i < mCoins - 1; i++) {
-        curCoins[i + 1].setHodnota(2 * curCoins[i].getHodnota() - 1);
+        curCoins[i + 1].setHodnota(max(2 * curCoins[i].getHodnota() - 1, 2));
     }
     if (from == 0 && DEBUG) {
         cout << "Zvysuji " << curCoins[0].getHodnota() << endl;
@@ -234,6 +244,17 @@ void Permutace::printMinCoins() {
     cout << endl << endl;
 }
 
+void Permutace::printCoins(vector<Coin> coins) {
+    int sum = 0;
+    cout << "Coins:\n";
+    for (int i = 0; i<coins.size(); i++) {
+        cout << "\t" << coins[i].getHodnota() << "\t" << coins[i].getPocet() << endl;
+        sum += coins[i].getPocet();
+    }
+    cout << "Suma: " << sum;
+    cout << endl << endl;
+}
+
 void Permutace::printPayout() {
     cout << "Payout (vyplacene castky):" << endl << "\t{ ";
     for (int i = 0; i<this->nPayout; i++) {
@@ -252,6 +273,19 @@ vector<Coin> Permutace::getCurCoins() {
 
 vector<Coin> Permutace::getMaxCoins() {
     return this->maxCoins;
+}
+
+void Permutace::setMaxCoinsExceptLast(vector<Coin> maxCoins, int length) {
+    this->maxCoins = maxCoins;
+    this->maxCoins[length - 1].setHodnota(maxCoins[length - 1].getHodnota()-1);
+    repairMaxCoins();
+}
+
+void Permutace::setCurCoins(vector<Coin> curCoins, int length) {
+    for(int i = 0; i < length; i++){
+        this->curCoins[i] = curCoins[i];
+    }
+    repairCurCoins(length-1);
 }
 
 vector<Coin> Permutace::getMinCoins() {

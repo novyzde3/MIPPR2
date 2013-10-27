@@ -46,8 +46,8 @@ OBJECTFILES= \
 CFLAGS=
 
 # CC Compiler Flags
-CCFLAGS=-Wall
-CXXFLAGS=-Wall
+CCFLAGS=
+CXXFLAGS=
 
 # Fortran Compiler Flags
 FFLAGS=
@@ -56,7 +56,7 @@ FFLAGS=
 ASFLAGS=
 
 # Link Libraries and Options
-LDLIBSOPTIONS=
+LDLIBSOPTIONS=-L../../../../../../../Program\ Files\ \(x86\)/MPICH2/lib -lcxx -lfmpich2 -lfmpich2g -lfmpich2s -lfmpich2g -lmpi -lmpe -lmpi -lmpicxx
 
 # Build Targets
 .build-conf: ${BUILD_SUBPROJECTS}
@@ -69,27 +69,27 @@ ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/mi-ppr2.exe: ${OBJECTFILES}
 ${OBJECTDIR}/Calculation.o: Calculation.cpp 
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} $@.d
-	$(COMPILE.cc) -g -Wall -MMD -MP -MF $@.d -o ${OBJECTDIR}/Calculation.o Calculation.cpp
+	$(COMPILE.cc) -g -I../../../../../../../Program\ Files\ \(x86\)/MPICH2/include -MMD -MP -MF $@.d -o ${OBJECTDIR}/Calculation.o Calculation.cpp
 
 ${OBJECTDIR}/Coin.o: Coin.cpp 
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} $@.d
-	$(COMPILE.cc) -g -Wall -MMD -MP -MF $@.d -o ${OBJECTDIR}/Coin.o Coin.cpp
+	$(COMPILE.cc) -g -I../../../../../../../Program\ Files\ \(x86\)/MPICH2/include -MMD -MP -MF $@.d -o ${OBJECTDIR}/Coin.o Coin.cpp
 
 ${OBJECTDIR}/Permutace.o: Permutace.cpp 
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} $@.d
-	$(COMPILE.cc) -g -Wall -MMD -MP -MF $@.d -o ${OBJECTDIR}/Permutace.o Permutace.cpp
+	$(COMPILE.cc) -g -I../../../../../../../Program\ Files\ \(x86\)/MPICH2/include -MMD -MP -MF $@.d -o ${OBJECTDIR}/Permutace.o Permutace.cpp
 
 ${OBJECTDIR}/StackRecord.o: StackRecord.cpp 
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} $@.d
-	$(COMPILE.cc) -g -Wall -MMD -MP -MF $@.d -o ${OBJECTDIR}/StackRecord.o StackRecord.cpp
+	$(COMPILE.cc) -g -I../../../../../../../Program\ Files\ \(x86\)/MPICH2/include -MMD -MP -MF $@.d -o ${OBJECTDIR}/StackRecord.o StackRecord.cpp
 
 ${OBJECTDIR}/main.o: main.cpp 
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} $@.d
-	$(COMPILE.cc) -g -Wall -MMD -MP -MF $@.d -o ${OBJECTDIR}/main.o main.cpp
+	$(COMPILE.cc) -g -I../../../../../../../Program\ Files\ \(x86\)/MPICH2/include -MMD -MP -MF $@.d -o ${OBJECTDIR}/main.o main.cpp
 
 # Subprojects
 .build-subprojects:

@@ -23,6 +23,7 @@ public:
     virtual ~Calculation();
     
     void printBestCoins();
+    vector<Coin> getBestCoins();
     //trivialni metoda na zjisteni, jak zaplatit
     void trivEvaluateCurCoins(vector<Coin> permutation);
     //netrivialni metoda na zjisteni, jak zaplatit - pouziva zasobnik a zkousi vsechny moznosti

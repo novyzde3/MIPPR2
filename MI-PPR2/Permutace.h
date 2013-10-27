@@ -30,11 +30,15 @@ public:
     void printCurCoins();
     void printMaxCoins();
     void printMinCoins();
+    static void printCoins(vector<Coin> coins);
     void printPayout();
     int getMaxCoinVal();
     int getMCoins();
     vector<Coin> getCurCoins();
     vector<Coin> getMaxCoins();
+    //nastavi do maxCoins data podle parametru, ale snizi posledni hodnotu o 1 - length je skutecna delka maxCoins
+    void setMaxCoinsExceptLast(vector<Coin> maxCoins, int length);
+    void setCurCoins(vector<Coin> curCoins, int length);
     vector<Coin> getMinCoins();
     
 private:
@@ -49,6 +53,7 @@ private:
     
     void initCurCoins();
     void initMaxCoins();
+    void repairMaxCoins();
     bool incrementCurCoins();
     void repairCurCoins(int);
 };

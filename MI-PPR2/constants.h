@@ -17,5 +17,8 @@ const bool  DEBUG = true;
 #define STARTVAL 999
 #define ERR -99
 
+#define FLAG_NEW_DATA 1
+#define FLAG_RESULTS 10
+
 #endif	/* CONSTANTS_H */
 

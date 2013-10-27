@@ -46,6 +46,12 @@ void Calculation::printBestCoins() {
     cout << endl << endl;
 }
 
+vector<Coin> Calculation::getBestCoins() {
+    return m_BestCoins;
+}
+
+
+
 void Calculation::trivEvaluateCurCoins(vector<Coin> permutation) {
     int iAmount, iCoinCount = 0, iCoinCountTmp, iCoinIndex;
     //bSkipped je true pokud se predcasne ukonci pocitani

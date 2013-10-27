@@ -44,8 +44,26 @@
       </toolsSet>
       <compileType>
         <ccTool>
-          <commandLine>-Wall</commandLine>
+          <incDir>
+            <pElem>../../../../../../../Program Files (x86)/MPICH2/include</pElem>
+          </incDir>
         </ccTool>
+        <linkerTool>
+          <linkerAddLib>
+            <pElem>../../../../../../../Program Files (x86)/MPICH2/lib</pElem>
+          </linkerAddLib>
+          <linkerLibItems>
+            <linkerLibLibItem>cxx</linkerLibLibItem>
+            <linkerLibLibItem>fmpich2</linkerLibLibItem>
+            <linkerLibLibItem>fmpich2g</linkerLibLibItem>
+            <linkerLibLibItem>fmpich2s</linkerLibLibItem>
+            <linkerLibLibItem>fmpich2g</linkerLibLibItem>
+            <linkerLibLibItem>mpi</linkerLibLibItem>
+            <linkerLibLibItem>mpe</linkerLibLibItem>
+            <linkerLibLibItem>mpi</linkerLibLibItem>
+            <linkerLibLibItem>mpicxx</linkerLibLibItem>
+          </linkerLibItems>
+        </linkerTool>
       </compileType>
       <item path="Calculation.cpp" ex="false" tool="1" flavor2="0">
       </item>
