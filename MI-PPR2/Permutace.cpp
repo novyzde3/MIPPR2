@@ -10,7 +10,7 @@
 #include <math.h>
 
 Permutace::Permutace(int n, int m, int* C) {
-    cout << ((DEBUG) ? "D: Permutace construct start\n" : "");
+    //cout << ((DEBUG) ? "D: Permutace construct start\n" : "");
     this->mCoins = m;
     this->curCoins.resize(m);
     this->maxCoins.resize(m);
@@ -123,7 +123,7 @@ bool Permutace::isSmallerVector(vector<Coin> smaller, vector<Coin> bigger) {
 }
 
 void Permutace::initCurCoins() {
-    cout << ((DEBUG) ? "D: initCurCoins() start\n" : "");
+    //cout << ((DEBUG) ? "D: initCurCoins() start\n" : "");
     if (this->mCoins >= 1)
         this->curCoins[0].setHodnota(1);
     if (this->mCoins >= 2)
@@ -134,7 +134,7 @@ void Permutace::initCurCoins() {
     }
     this->minCoins = this->curCoins;
     this->isCoinsInit = true;
-    cout << ((DEBUG) ? "D: initCurCoins() end\n" : "");
+    //cout << ((DEBUG) ? "D: initCurCoins() end\n" : "");
 }
 
 void Permutace::initMaxCoins() {
