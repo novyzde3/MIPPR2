@@ -8,7 +8,8 @@
 #ifndef CONSTANTS_H
 #define	CONSTANTS_H
 
-const bool  DEBUG = true;
+const bool  DEBUG = false;
+const bool  DEBUG2 = true;
 //const int   ENDVAL = -158;
 //const int   ERR = -99;
 

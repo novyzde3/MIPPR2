@@ -10,6 +10,7 @@ using namespace std;
 #include <list>
 #include "Calculation.h"
 #include "StackRecord.h"
+#include "Permutace.h"
 
 Calculation::Calculation(int n, int m, int* C) {
     this->m_iCoinsSize = m;
@@ -79,7 +80,11 @@ void Calculation::trivEvaluateCurCoins(vector<Coin> permutation) {
             bSkipped = true;
             break;
         }
-    }    
+    }
+    cout << "-------------VYPOCTENO-----------------" << endl; 
+    cout << iCoinCount;
+    Permutace::printCoins(permutation);
+    
     if(!bSkipped && iCoinCount < this->m_iBestCoinCount){
         this->m_iBestCoinCount = iCoinCount;
         this->m_BestCoins = permutation;

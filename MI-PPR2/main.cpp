@@ -13,6 +13,7 @@
 #include "Calculation.h"
 #include "constants.h"
 //#include <mpi.h>
+#include <fstream>
 #include "../../../../../../../Program Files (x86)/MPICH2/include/mpi.h"
 
 using namespace std;
@@ -91,7 +92,7 @@ int rozdelPraci(Permutace *perm, int m, int cpus, int receiver = -1) {
 void processReceivedWork(Permutace* perm, int message[], int messageLength, int my_rank){
     vector<Coin> tmpVector(messageLength/2);
     int length = 0;
-    if(DEBUG){
+    if(DEBUG2){
         cout << "---------------------PRISLA PRACE PRO " << my_rank << " ------------------------" << endl;
         for(int i = 0; i < messageLength; i++)
             cout << message[i] << " ";
@@ -119,7 +120,7 @@ void processResults(int message[], int messageLength, int& bestCoinCount, vector
     for(int i = 1; i < messageLength; i += 2){
         sum += message[i];
     }
-    if(sum < bestCoinCount){
+    if(sum < bestCoinCount && sum > 0){
         bestCoinCount = sum;
         for(int j = 0; j < messageLength; j += 2){
             bestCoins[j/2].setHodnota(message[j]);
@@ -267,12 +268,17 @@ void forceEnd(int cpuCount, int message[], int messageLength){
 }
 
 int main(int argc, char** argv) {
-    int n = 5;
-    int* C = new int[n];
+    int m, n, *C;
+    ifstream fin(argv[1]);
+    
+    fin >> n;
+    C = new int[n];
     for (int i = 0; i < n; i++) {
-        C[i] = i * 7 - i*i;
+        fin >> C[i];
     }
-    int m = 4;
+    fin >> m;
+    fin.close();
+    
     
     //atributy slouzici ke komunikaci mezi procesy, pripadne k zajisteni prace
     int my_rank;
@@ -298,13 +304,16 @@ int main(int argc, char** argv) {
     //uvodni rozdeleni prace
     Permutace* perm = new Permutace(n, m, C);
     perm->getNextPerm();
+//    if(DEBUG)
+//        perm->printCurCoins();
+    //cout << "n = " << n << " m = " << m << endl;
     if(my_rank == 0){
         rozdelPraci(perm, m, cpuCount);
     }else{
         MPI_Recv(&message, messageLength, MPI_INT, MPI_ANY_SOURCE, MPI_ANY_TAG, MPI_COMM_WORLD, &status);
         processReceivedWork(perm, message, messageLength, my_rank);
     }
-    if(DEBUG)
+    if(DEBUG2)
     {
         cout << "---------------------PROCES " << my_rank << "------------------------" << endl;
         perm->printCurCoins();
@@ -377,9 +386,14 @@ int main(int argc, char** argv) {
             message[index++] = it->getHodnota();
             message[index++] = it->getPocet();
         }
-        MPI_Send(message, messageLength, MPI_INT, 0, FLAG_RESULTS, MPI_COMM_WORLD);
-        if(DEBUG)
+        if(DEBUG){
+            Permutace::printCoins(tmp);
             cout << "---------------------PROCES " << my_rank << " POSLAL VYSLEDEK------------------------" << endl;
+        }
+        MPI_Send(message, messageLength, MPI_INT, 0, FLAG_RESULTS, MPI_COMM_WORLD);
+        
+            
+        
     }
     //calcPrim->printBestCoins();
     
