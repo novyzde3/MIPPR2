@@ -25,7 +25,7 @@ public:
     void printBestCoins();
     vector<Coin> getBestCoins();
     //trivialni metoda na zjisteni, jak zaplatit
-    void trivEvaluateCurCoins(vector<Coin> permutation);
+    int trivEvaluateCurCoins(vector<Coin> permutation);
     //netrivialni metoda na zjisteni, jak zaplatit - pouziva zasobnik a zkousi vsechny moznosti
     void evaluCurCoinsPrecise(vector<Coin> permutation);
 private:

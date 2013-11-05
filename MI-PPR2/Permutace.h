@@ -31,6 +31,7 @@ public:
     void printMaxCoins();
     void printMinCoins();
     static void printCoins(vector<Coin> coins);
+    static void printCoinsSimple(vector<Coin> coins);
     void printPayout();
     int getMaxCoinVal();
     int getMCoins();

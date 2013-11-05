@@ -14,10 +14,16 @@
 #include "constants.h"
 //#include <mpi.h>
 #include <fstream>
+#include <time.h>
 #include "../../../../../../../Program Files (x86)/MPICH2/include/mpi.h"
 
 using namespace std;
 
+void printTime(time_t begin, time_t end){
+    int seconds = difftime(end, begin);
+    int minutes = seconds / 60;
+    cout << "Spent time: " << minutes << " m :" << seconds % 60 << " s" << endl;
+}
 
 bool rozdelitNaKolikaRadech(Permutace *perm, int cpus, int &radu, int &cnt) {
     vector<Coin> isEnd;
@@ -55,7 +61,7 @@ bool rozdelitNaKolikaRadech(Permutace *perm, int cpus, int &radu, int &cnt) {
     //exit (-4);
 }
 
-int rozdelPraci(Permutace *perm, int m, int cpus, int receiver = -1) {
+int rozdelPraci(Permutace *perm, int m, int cpus, int source, int receiver = -1) {
     int radu = 0, segmentu = 0, oblast;
     int message[m*2];
     if(!rozdelitNaKolikaRadech(perm, cpus, radu, segmentu))
@@ -68,7 +74,11 @@ int rozdelPraci(Permutace *perm, int m, int cpus, int receiver = -1) {
     int coinId;
     for(int i = 1; i < cpus; i++){
         coinId = 0;
-        startCoins = tmpPerm->getCurCoins();
+        //aby se nepocitalo vicekrat to same - tmpPerm->getCurCoins() vraci nejnizsi permutaci pro dany zacatek
+        if(i == 1)
+            startCoins = perm->getCurCoins();
+        else
+            startCoins = tmpPerm->getCurCoins();
         for(vector<Coin>::iterator it = startCoins.begin(); it != startCoins.end(); it++)
             message[coinId++] = it->getHodnota();
         while(coinId < m){
@@ -83,22 +93,30 @@ int rozdelPraci(Permutace *perm, int m, int cpus, int receiver = -1) {
         while(coinId < 2*m){
             message[coinId++] = -1;
         }
+        if(DEBUG){
+            cout << "---------------------" << source << "POSILA PRACI " << (receiver == -1 ? i : receiver) << " ------------------------" << endl;
+            for(int i = 0; i < m*2; i++)
+                cout << message[i] << " ";
+            cout << endl;
+            cout << "--------------------------------------------------------------" << endl;
+        }
         MPI_Send (message, m*2, MPI_INT, (receiver == -1 ? i : receiver), FLAG_NEW_DATA, MPI_COMM_WORLD);
     }
+    if(DEBUG){
+        cout << "Orig coins" << endl;
+        Permutace::printCoinsSimple(perm->getCurCoins());
+    }
     perm->setCurCoins(tmpPerm->getCurCoins(), radu);
+    if(DEBUG){
+        cout << "New Start" << endl;
+        Permutace::printCoinsSimple(perm->getCurCoins());
+    }
     return true;
 }
 
 void processReceivedWork(Permutace* perm, int message[], int messageLength, int my_rank){
     vector<Coin> tmpVector(messageLength/2);
     int length = 0;
-    if(DEBUG2){
-        cout << "---------------------PRISLA PRACE PRO " << my_rank << " ------------------------" << endl;
-        for(int i = 0; i < messageLength; i++)
-            cout << message[i] << " ";
-        cout << endl;
-        cout << "--------------------------------------------------------------" << endl;
-    }
     for(int i = 0; i < messageLength/2; i++){
         tmpVector[i] = Coin(message[i]);
         if(message[i] != -1)
@@ -112,6 +130,14 @@ void processReceivedWork(Permutace* perm, int message[], int messageLength, int 
             length++;
     }
     perm->setMaxCoinsExceptLast(tmpVector, length);
+    if(DEBUG){
+        cout << "PROCES " << my_rank << " DOSTAL PRACI" << endl;
+        cout << "Start: " << endl;
+        Permutace::printCoinsSimple(perm->getCurCoins());
+        cout << "End: " << endl;
+        Permutace::printCoinsSimple(perm->getMaxCoins());
+        
+    }
 }
 
 void processResults(int message[], int messageLength, int& bestCoinCount, vector<Coin>& bestCoins){
@@ -145,7 +171,7 @@ void receiveMessage(Permutace* perm, int message[], int messageLength, int my_ra
     switch(status.MPI_TAG){
         case FLAG_HAS_WORK:
             if(bHasWork){
-                if(!rozdelPraci(perm, (messageLength/2), 2, status.MPI_SOURCE)){
+                if(!rozdelPraci(perm, (messageLength/2), 2, my_rank, status.MPI_SOURCE)){
                     bHasWork = false;
                     MPI_Send(message, messageLength, MPI_INT, status.MPI_SOURCE, FLAG_NO_WORK, MPI_COMM_WORLD);
                     return;
@@ -268,6 +294,7 @@ void forceEnd(int cpuCount, int message[], int messageLength){
 }
 
 int main(int argc, char** argv) {
+    time_t begin = time(NULL);
     int m, n, *C;
     ifstream fin(argv[1]);
     
@@ -308,12 +335,12 @@ int main(int argc, char** argv) {
 //        perm->printCurCoins();
     //cout << "n = " << n << " m = " << m << endl;
     if(my_rank == 0){
-        rozdelPraci(perm, m, cpuCount);
+        rozdelPraci(perm, m, cpuCount, 0);
     }else{
         MPI_Recv(&message, messageLength, MPI_INT, MPI_ANY_SOURCE, MPI_ANY_TAG, MPI_COMM_WORLD, &status);
         processReceivedWork(perm, message, messageLength, my_rank);
     }
-    if(DEBUG2)
+    if(DEBUG)
     {
         cout << "---------------------PROCES " << my_rank << "------------------------" << endl;
         perm->printCurCoins();
@@ -354,14 +381,21 @@ int main(int argc, char** argv) {
                     if(bRet || bForceEnd)
                         break;
                 }
-                if(bRet)
+                if(bRet){
                     bHasWork = true;
+                    isEnd = perm->getCurCoins();
+                }
             }
             continue;
         }
 //        if(DEBUG)
 //            Permutace::printCoins(isEnd);
-        calcPrim->trivEvaluateCurCoins(isEnd);
+        int tmpRes = calcPrim->trivEvaluateCurCoins(isEnd);
+        if(DEBUG){
+            cout << "-------------VYPOCTENO-----------------" << endl; 
+            cout << "Vysledek: " << tmpRes << endl;
+            Permutace::printCoinsSimple(isEnd);
+        }
         //calcPrim->evaluCurCoinsPrecise(isEnd);
         isEnd = perm->getNextPerm();
         receiveMessage(perm, message, messageLength, my_rank, bHasWork, bForceEnd, status, bWhiteToken);
@@ -387,8 +421,8 @@ int main(int argc, char** argv) {
             message[index++] = it->getPocet();
         }
         if(DEBUG){
-            Permutace::printCoins(tmp);
             cout << "---------------------PROCES " << my_rank << " POSLAL VYSLEDEK------------------------" << endl;
+            Permutace::printCoins(tmp);
         }
         MPI_Send(message, messageLength, MPI_INT, 0, FLAG_RESULTS, MPI_COMM_WORLD);
         
@@ -398,7 +432,11 @@ int main(int argc, char** argv) {
     //calcPrim->printBestCoins();
     
     
-    
+    if(my_rank == 0)
+    {
+        time_t end = time(NULL);
+        printTime(begin, end);
+    }
     MPI_Finalize();
     delete perm;
     delete calcPrim;

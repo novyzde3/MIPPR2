@@ -53,7 +53,7 @@ vector<Coin> Calculation::getBestCoins() {
 
 
 
-void Calculation::trivEvaluateCurCoins(vector<Coin> permutation) {
+int Calculation::trivEvaluateCurCoins(vector<Coin> permutation) {
     int iAmount, iCoinCount = 0, iCoinCountTmp, iCoinIndex;
     //bSkipped je true pokud se predcasne ukonci pocitani
     bool bSkipped = false;
@@ -74,21 +74,18 @@ void Calculation::trivEvaluateCurCoins(vector<Coin> permutation) {
         }
         if(iAmount != 0){
             bSkipped = true;
-            break;
+            return -1;
         }
         if(iCoinCount >= this->m_iBestCoinCount){
             bSkipped = true;
             break;
         }
     }
-    cout << "-------------VYPOCTENO-----------------" << endl; 
-    cout << iCoinCount;
-    Permutace::printCoins(permutation);
-    
     if(!bSkipped && iCoinCount < this->m_iBestCoinCount){
         this->m_iBestCoinCount = iCoinCount;
         this->m_BestCoins = permutation;
     }
+    return iCoinCount;
 }
 
 void Calculation::evaluCurCoinsPrecise(vector<Coin> permutation) {

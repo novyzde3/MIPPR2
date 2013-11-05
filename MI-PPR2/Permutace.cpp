@@ -255,6 +255,14 @@ void Permutace::printCoins(vector<Coin> coins) {
     cout << endl << endl;
 }
 
+void Permutace::printCoinsSimple(vector<Coin> coins) {
+    cout << "Coins:\n";
+    for (int i = 0; i<coins.size(); i++) {
+        cout << coins[i].getHodnota() << " ";
+    }
+    cout << endl << endl;
+}
+
 void Permutace::printPayout() {
     cout << "Payout (vyplacene castky):" << endl << "\t{ ";
     for (int i = 0; i<this->nPayout; i++) {
