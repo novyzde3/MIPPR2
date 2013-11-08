@@ -1,0 +1,32 @@
+# all after symbol '#' is comment
+
+# === which communication library to use ===
+CC	=	mpiCC      # for ethernet and infiniband networks
+
+CFLAGS	= -c -include constants.h
+LIBS	=	-lm
+
+all: output
+
+output:	main.o Permutace.o Calculation.o Coin.o StackRecord.o constants.h
+	$(CC) main.o Permutace.o Calculation.o Coin.o StackRecord.o -o out-coin-machine $(LIBS)
+
+main.o:main.cpp
+	$(CC) $(CFLAGS) main.cpp $(LIBS)
+
+Permutace.o:Permutace.cpp
+	$(CC) $(CFLAGS) Permutace.cpp $(LIBS)
+
+Calculation.o:Calculation.cpp
+	$(CC) $(CFLAGS) Calculation.cpp $(LIBS)
+
+Coin.o:Coin.cpp
+	$(CC) $(CFLAGS) Coin.cpp $(LIBS)
+
+StackRecord.o:StackRecord.cpp
+	$(CC) $(CFLAGS) StackRecord.cpp $(LIBS)
+
+clean:
+	rm -rf *o out-coin-machine
+
+
