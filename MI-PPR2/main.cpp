@@ -324,6 +324,13 @@ int main(int argc, char** argv) {
     MPI_Comm_rank(MPI_COMM_WORLD, &my_rank);
     MPI_Comm_size(MPI_COMM_WORLD, &cpuCount);
     
+    if(DEBUG2 && my_rank == 0){
+        cout << "Vstup:" << endl;
+        for(int i = 0; i < n; i++)
+            cout << C[i] << " ";
+        cout << endl;
+    }
+    
     vector<Coin> isEnd;
     isEnd.resize(1);
     isEnd[0].setHodnota(STARTVAL);
